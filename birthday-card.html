@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Happy Birthday!</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page">
+    <section class="card card-large" role="article" aria-label="Birthday Card">
+      <!-- Scenes: intro (cake) -> envelope -> heart/question -> love letter -> photos -> final surprise -> exit message -->
+      <div id="scene-intro" class="scene">
+        <h1 id="headerText" class="big-header">Happy Birthday Raikar 💕 ❤ 🫂</h1>
+        <div class="cake-wrap">
+          <!-- Photo-style decadent cake with glossy ganache and decor overlays -->
+          <div id="cake" class="photo-cake" title="Click to blow candles">
+            <div class="ganache-highlight"></div>
+            <div id="cakeDecor" class="cake-decor"></div>
+            <!-- candles removed per request -->
+          </div>
+          <div class="blow-area">
+            <button id="blowBtn" class="btn primary">Close ur eyes and make a wish</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="scene-envelope" class="scene hidden">
+        <h2 class="center">Open your surprise</h2>
+        <div id="envelope" class="envelope" title="Click to open">
+          <div class="envelope-flap"></div>
+          <div class="envelope-body">
+            <div class="envelope-heart big-heart"></div>
+            <div class="envelope-heart small-heart left"></div>
+            <div class="envelope-heart small-heart right"></div>
+            <div class="teddy left">🧸</div>
+            <div class="teddy right">🧸</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="scene-heart" class="scene hidden">
+        <div class="center">
+          <div id="sprinkleHeart" class="sprinkle-heart" aria-hidden="true">
+            <img id="heartImg" alt="heart image" />
+          </div>
+            <p class="q">Do you love me ??</p>
+            <div class="choices">
+              <button id="yesBtn" class="btn primary">Yes</button>
+              <button id="noBtn" class="btn ghost">No</button>
+            </div>
+            <p id="oops" class="oops hidden">Oops!! Think again</p>
+        </div>
+      </div>
+
+      <div id="scene-sweet" class="scene hidden">
+        <h2 class="center title-small">A small letter for u 💓❤</h2>
+        <button id="letsGo" class="btn primary">Let's go on</button>
+      </div>
+
+      <div id="scene-letter" class="scene hidden">
+        <div class="letter">
+          <button id="backFromLetter" class="btn ghost small">Back</button>
+          <div id="loveText" class="love-text">You are the melody of my life. I love you endlessly...</div>
+        </div>
+      </div>
+
+      <div id="scene-photos" class="scene hidden">
+        <h2 id="photosHeader" class="center clickable">Next surprise !!!</h2>
+        <div id="photos" class="photos"></div>
+        <div class="photo-controls"><button id="backFromPhotos" class="btn ghost">Back</button></div>
+      </div>
+
+      <div id="scene-final" class="scene hidden">
+        <h2 class="center">Final surprise 🫢!!</h2>
+        <div class="final-box">
+          <p>Enjoy this song I picked for you.</p>
+          <audio id="audio" controls>
+            <source src="audio for ssr.mp3" type="audio/mpeg-1">
+          </audio>
+          <!-- Upload inputs removed per request -->
+          <div class="final-controls"><button id="exitBtn" class="btn primary">Exit</button></div>
+        </div>
+      </div>
+
+      <div id="scene-exit" class="scene hidden center">
+        <h1 class="big-header">Once again Happiest birthday my dear Raikar 💕 😘 🫂 🫂</h1>
+        <p class="sub">Meet u soon 🤗🧿🥰</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Configuration: edit these values directly to change names, texts, default photos and music path.
+    const config = {
+      recipientName: 'Raikar',
+      headerText: 'Happy Birthday Raikar ma💕 ❤ 🫂',
+      candles: 3,
+      loveText: `My dearest,\nRaikar, U've turned 18 now ma 
+I'm very happy for u 😊🫂 my little stupid fellow is growing stronger much day by day ma .I wish u have evrything u want in ur life 🫶☺ Enjoy ur day and rock this year .May God bless you with all the happiness and prosperity u want for and ull cm out with flying colours in the future which definitely I'll be beside u to witness it ma ❤🫂🫶🧿
+But u won't get peace as I'm already in ur life 🤣🤣
+             - By ur Tivi ma 🫂🫶.\nWith all my love.`,
+      // photos: list local filenames (in the same folder) or URLs. Using your local images below.
+      photos:['ssr final img.jpg'],
+      // cake image (replace with a high-res photorealistic image file in the same folder or a remote URL)
+      cakeImage: 'https://preview.free3d.com/img/2015/04/1875481376136889883/qb6wmtp1.jpg',
+      // heart image used in the heart scene (keeps the question flow)
+      heartImage: 'https://static.turbosquid.com/Preview/2016/02/12__16_09_14/heart_1_01_2.jpgb518323d-abaf-45fe-9dd0-ee792d1b7cb1Original.jpg',
+      // optional decorative overlays the script can place (strawberries, gold leaf) - set URLs or filenames
+      decor: {
+        strawberries: [ 'straw1.png', 'straw2.png', 'straw3.png' ],
+        goldLeaf: [ 'gold1.png' ]
+      },
+      // default music: direct audio/file URL (OneDrive link provided)
+      music: 'https://1drv.ms/u/c/1797C9BBE8D7E5AA/EXt2_i1Bw0dBgBzfQ-SJ7WsB0zGztbTV82vraXJK5RE6MA?e=oWGdnc'
+    };
+
+    // utility: create simple SVG placeholder image data URLs with different colors
+    function makePlaceholderSVG(text, bg){
+      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='800' height='600'><rect width='100%' height='100%' fill='${bg}' rx='20'/><text x='50%' y='50%' font-size='48' text-anchor='middle' fill='#222' dy='.35em' font-family='Arial, Helvetica, sans-serif'>${text}</text></svg>`;
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    }
+
+    // Using provided local photos; placeholder generation removed.
+
+    // Scene helper
+    function showScene(id){
+      document.querySelectorAll('.scene').forEach(s=>s.classList.add('hidden'));
+      const el = document.getElementById(id);
+      if(el) el.classList.remove('hidden');
+    }
+
+    // build candles (smaller, 6 per layer)
+    // Candles removed — buildCandles is now a no-op.
+    function buildCandles(){
+      // intentionally empty: candles were removed per user request
+      return;
+    }
+
+    // extinguish flames
+    function blowCandles(){
+      const flames = document.querySelectorAll('.flame');
+      flames.forEach((f, idx)=>{
+        setTimeout(()=>{
+          f.style.transition='opacity 700ms ease, transform 700ms ease';
+          f.style.opacity='0';
+          f.style.transform='translateY(-6px) scale(0.9)';
+        }, idx*40);
+      });
+    }
+
+    // Envelope open -> animate envelope in 3D then show heart
+    function openEnvelope(){
+      const env = document.getElementById('envelope');
+      // play opening animation (3D flap + teddies pop)
+      env.classList.add('opening');
+      // short delay to allow opening animation then move to heart scene
+      setTimeout(()=>{
+        // proceed to heart scene
+        showScene('scene-heart');
+        const heart = document.getElementById('sprinkleHeart');
+        heart.classList.add('beat-rotate');
+        // show the question immediately (visible) while keeping the beat animation
+        const q = document.getElementById('qbox');
+        if(q){ q.classList.remove('hidden'); q.classList.add('qbox-visible'); }
+        // stop beat after 5s but keep question visible
+        setTimeout(()=>{ heart.classList.remove('beat-rotate'); },5000);
+      },700);
+    }
+
+    // Photo slideshow: rotate each photo and wait 5 seconds each
+    function runPhotoShow(onComplete){
+      const photos =['ssr final img.jpg'];
+      const container = document.getElementById('photos');
+      container.innerHTML='Moments with u are just amazing 🤌❤🧿 I value our relationship more than you will ever know 😍😘☺ I dk wt I did to deserve a partner as wonderful as  you are in my life🤌🫂🫶💖 ';
+      const img = document.createElement('img'); 
+      img.className='photo';
+      img.src=photos[0];
+      img.alt="photo";
+      container.appendChild(img);
+
+      let i=0;
+      const next = ()=>{
+        if(i>=photos.length){ onComplete && onComplete(); return; }
+        img.style.transition='transform 1.2s ease';
+        img.style.transform='rotate(0deg)';
+        // set background image
+        img.style.backgroundImage = 'url(${photos[i]})';
+        img.style.backgroundSize='cover';
+        img.style.backgroundPosition='center';
+        // force reflow then rotate
+        void img.offsetWidth;
+        img.style.transform='rotate(360deg)';
+        // wait 5s then next
+        setTimeout(()=>{ i++; next(); },5000);
+      };
+      next();
+    }
+
+    // wire interactions
+    document.addEventListener('DOMContentLoaded', ()=>{
+      // initial header
+      document.getElementById('headerText').textContent = config.headerText;
+
+      // set cake image from config if available
+      const cakeEl = document.getElementById('cake');
+      if(config.cakeImage){
+        cakeEl.style.backgroundImage = `url(${config.cakeImage})`;
+        cakeEl.style.backgroundSize = 'cover';
+        cakeEl.style.backgroundPosition = 'center center';
+      }
+
+      // set heart image if provided and mark the heart container as image-based
+      const heartImg = document.getElementById('heartImg');
+      const heartContainer = document.getElementById('sprinkleHeart');
+      if(config.heartImage && heartImg){
+        heartImg.src = config.heartImage;
+        heartContainer.classList.add('image-heart');
+      }
+
+      // populate top decor (strawberries / gold leaf) if provided
+      const decorContainer = document.getElementById('cakeDecor');
+      if(config.decor){
+        const items = [];
+        (config.decor.strawberries||[]).forEach((src,i)=> items.push({src,cls:'straw'}));
+        (config.decor.goldLeaf||[]).forEach((src,i)=> items.push({src,cls:'gold'}));
+        decorContainer.innerHTML = '';
+        items.slice(0,6).forEach(it=>{
+          const d = document.createElement('div'); d.className='decor-item';
+          d.style.backgroundImage = `url(${it.src})`;
+          decorContainer.appendChild(d);
+        });
+      }
+
+      // buildCandles intentionally removed; no candles to render
+      showScene('scene-intro');
+
+      // blow button
+      document.getElementById('blowBtn').addEventListener('click', ()=>{
+        blowCandles();
+        // after short delay show envelope with entrance animation
+        setTimeout(()=>{
+          showScene('scene-envelope');
+          const env = document.getElementById('envelope');
+          if(env){
+            // ensure classes are reset then play entrance
+            env.classList.remove('opening');
+            env.classList.add('enter');
+            // remove the enter class after animation so it can replay next time
+            setTimeout(()=>{ env.classList.remove('enter'); }, 2200);
+          }
+        }, 1200);
+      });
+
+      // envelope open
+      document.getElementById('envelope').addEventListener('click', ()=>{
+        openEnvelope();
+      });
+
+      // question buttons
+      document.getElementById('noBtn').addEventListener('click', ()=>{
+        const oops = document.getElementById('oops');
+        oops.classList.remove('hidden');
+        setTimeout(()=>{ oops.classList.add('hidden'); },1400);
+      });
+
+      document.getElementById('yesBtn').addEventListener('click', ()=>{
+        showScene('scene-sweet');
+      });
+
+      // let's go -> letter
+      document.getElementById('letsGo').addEventListener('click', ()=>{
+        document.getElementById('loveText').textContent = config.loveText;
+        showScene('scene-letter');
+      });
+
+      document.getElementById('backFromLetter').addEventListener('click', ()=>{
+        showScene('scene-photos');
+        // hide back button until slideshow finishes (slideshow starts when user clicks header)
+        document.getElementById('backFromPhotos').style.visibility='hidden';
+      });
+
+      // start slideshow when user clicks "Next surprise !!!"
+      document.getElementById('photosHeader').addEventListener('click', ()=>{
+        const header = document.getElementById('photosHeader');
+        header.classList.add('hidden');
+        runPhotoShow(()=>{ document.getElementById('backFromPhotos').style.visibility='visible'; });
+      });
+
+      document.getElementById('backFromPhotos').addEventListener('click', ()=>{
+        showScene('scene-final');
+      });
+
+      // audio element: set source from config if it's a direct audio file URL (skip YouTube links)
+      const audio = document.getElementById('audio');
+      if(config.music && !/youtu/.test(config.music)){
+        audio.src = 'mungaru male final.mp3';
+      }
+
+      document.getElementById('exitBtn').addEventListener('click', ()=>{
+        showScene('scene-exit');
+      });
+
+      // allow clicking the cake itself to blow as well
+      document.getElementById('cake').addEventListener('click', ()=>{
+        document.getElementById('blowBtn').click();
+      });
+
+    });
+  </script>
+</body>
+</html>
